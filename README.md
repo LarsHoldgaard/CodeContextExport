@@ -5,3 +5,6 @@ Why It's Cool & Important:
 CodeContextExport takes the hassle out of manually gathering and copying file content by automating the export process. Whether you're working with AI-driven tools that need a better understanding of your codebase or just want an efficient way to extract file content, this tool saves time and simplifies workflows.
 
 (Lol, all written by ChatGPT - pretty bad, right?)
+
+
+PS: No human has read this code, and it was made very quickly. I don't mind shit code, but even I don't dare open these files.
