@@ -9,6 +9,7 @@ namespace CodeContextExport
         private string basePath;
         private List<string> ignorePatterns;
         private bool isGenerating = false;
+        private List<string> recentBasePaths = new();
 
         public Form1()
         {
@@ -30,6 +31,9 @@ namespace CodeContextExport
 
             // Load ignore patterns
             ignorePatterns = File.ReadAllLines("ignorefiles.txt").ToList();
+
+            linkClearSelection.LinkClicked += linkClearSelection_LinkClicked;
+            lstRecents.SelectedIndexChanged += lstRecents_SelectedIndexChanged;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -40,8 +44,21 @@ namespace CodeContextExport
             basePath = ConfigurationManager.AppSettings["BasePath"] ?? string.Empty;
             savePath = ConfigurationManager.AppSettings["SavePath"] ?? string.Empty;
 
+            // Load "RecentBasePaths"
+            string rawRecents = ConfigurationManager.AppSettings["RecentBasePaths"] ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(rawRecents))
+            {
+                recentBasePaths = rawRecents.Split(',')
+                    .Select(r => r.Trim())
+                    .Where(r => !string.IsNullOrEmpty(r))
+                    .ToList();
+            }
+
             txtBasePath.Text = basePath;
             txtSavePath.Text = savePath;
+
+            // Fill the Recents listbox
+            UpdateRecentsListBox();
 
             if (!string.IsNullOrEmpty(basePath))
             {
@@ -53,19 +70,48 @@ namespace CodeContextExport
         {
             using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
-                folderDialog.Description = "Select the base path for your project";
-                folderDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-                folderDialog.ShowNewFolderButton = false;
-
+                // ...
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
                     basePath = folderDialog.SelectedPath;
                     txtBasePath.Text = basePath;
                     SaveSetting("BasePath", basePath);
+
+                    // Manage recents
+                    AddToRecents(basePath);
+
                     LoadDirectory(basePath);
                 }
             }
         }
+
+        private void AddToRecents(string path)
+        {
+            // Move it to the front if it already exists
+            recentBasePaths.Remove(path);
+            recentBasePaths.Insert(0, path);
+
+            // Limit to 10
+            if (recentBasePaths.Count > 10)
+                recentBasePaths = recentBasePaths.Take(10).ToList();
+
+            // Save to config
+            string joined = string.Join(",", recentBasePaths);
+            SaveSetting("RecentBasePaths", joined);
+
+            UpdateRecentsListBox();
+        }
+
+        private void UpdateRecentsListBox()
+        {
+            if (lstRecents == null) return;
+            lstRecents.Items.Clear();
+            foreach (var p in recentBasePaths)
+            {
+                lstRecents.Items.Add(p);
+            }
+        }
+
 
         private void btnSetSavePath_Click(object sender, EventArgs e)
         {
@@ -110,6 +156,37 @@ namespace CodeContextExport
 
             rootNode.Expand();
         }
+
+        private void linkClearSelection_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
+        {
+            ClearAllNodes(treeViewFiles.Nodes);
+        }
+
+        private void ClearAllNodes(TreeNodeCollection nodes)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                node.Checked = false;
+                if (node.Nodes.Count > 0)
+                {
+                    ClearAllNodes(node.Nodes);
+                }
+            }
+        }
+
+
+
+        private void lstRecents_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (lstRecents?.SelectedItem is string selectedPath)
+            {
+                basePath = selectedPath;
+                txtBasePath.Text = basePath;
+                SaveSetting("BasePath", basePath);
+                LoadDirectory(basePath);
+            }
+        }
+
 
         private void LoadSubDirectories(string dir, TreeNode node)
         {

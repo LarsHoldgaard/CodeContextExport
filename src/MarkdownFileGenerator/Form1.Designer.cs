@@ -2,9 +2,6 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
@@ -38,16 +35,20 @@
             txtBasePath = new TextBox();
             btnSetSavePath = new Button();
             txtSavePath = new TextBox();
+            linkClearSelection = new LinkLabel();
+            lstRecents = new ListBox();
+            lblRecents = new Label();
             SuspendLayout();
             // 
             // treeViewFiles
             // 
+            treeViewFiles.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             treeViewFiles.ImageIndex = 0;
             treeViewFiles.ImageList = imageListIcons;
             treeViewFiles.Location = new Point(12, 97);
             treeViewFiles.Name = "treeViewFiles";
             treeViewFiles.SelectedImageIndex = 0;
-            treeViewFiles.Size = new Size(685, 341);
+            treeViewFiles.Size = new Size(660, 341);
             treeViewFiles.TabIndex = 0;
             // 
             // imageListIcons
@@ -60,9 +61,10 @@
             // 
             // btnGenerate
             // 
-            btnGenerate.Location = new Point(713, 415);
+            btnGenerate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnGenerate.Location = new Point(690, 415);
             btnGenerate.Name = "btnGenerate";
-            btnGenerate.Size = new Size(75, 23);
+            btnGenerate.Size = new Size(247, 23);
             btnGenerate.TabIndex = 1;
             btnGenerate.Text = "Generate";
             btnGenerate.UseVisualStyleBackColor = true;
@@ -80,7 +82,7 @@
             // 
             txtBasePath.Location = new Point(117, 13);
             txtBasePath.Name = "txtBasePath";
-            txtBasePath.Size = new Size(580, 23);
+            txtBasePath.Size = new Size(555, 23);
             txtBasePath.TabIndex = 3;
             // 
             // btnSetSavePath
@@ -96,21 +98,53 @@
             // 
             txtSavePath.Location = new Point(117, 42);
             txtSavePath.Name = "txtSavePath";
-            txtSavePath.Size = new Size(580, 23);
+            txtSavePath.Size = new Size(555, 23);
             txtSavePath.TabIndex = 5;
+            // 
+            // linkClearSelection
+            // 
+            linkClearSelection.AutoSize = true;
+            linkClearSelection.Location = new Point(12, 70);
+            linkClearSelection.Name = "linkClearSelection";
+            linkClearSelection.Size = new Size(84, 15);
+            linkClearSelection.TabIndex = 6;
+            linkClearSelection.TabStop = true;
+            linkClearSelection.Text = "Clear selection";
+            // 
+            // lstRecents
+            // 
+            lstRecents.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            lstRecents.FormattingEnabled = true;
+            lstRecents.ItemHeight = 15;
+            lstRecents.Location = new Point(690, 116);
+            lstRecents.Name = "lstRecents";
+            lstRecents.Size = new Size(247, 289);
+            lstRecents.TabIndex = 7;
+            // 
+            // lblRecents
+            // 
+            lblRecents.AutoSize = true;
+            lblRecents.Location = new Point(690, 98);
+            lblRecents.Name = "lblRecents";
+            lblRecents.Size = new Size(48, 15);
+            lblRecents.TabIndex = 8;
+            lblRecents.Text = "Recents";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(949, 450);
+            Controls.Add(lblRecents);
+            Controls.Add(lstRecents);
+            Controls.Add(linkClearSelection);
             Controls.Add(txtSavePath);
             Controls.Add(btnSetSavePath);
             Controls.Add(txtBasePath);
             Controls.Add(btnSetBasePath);
             Controls.Add(btnGenerate);
             Controls.Add(treeViewFiles);
-            Name = "MainForm";
+            Name = "Form1";
             Text = "CodeContextExport";
             Load += Form1_Load;
             ResumeLayout(false);
@@ -119,13 +153,16 @@
 
         #endregion
 
-        private TreeView treeViewFiles;
-        private Button btnGenerate;
-        private FolderBrowserDialog FolderBrowserDialog;
-        private ImageList imageListIcons;
-        private Button btnSetBasePath;
-        private TextBox txtBasePath;
-        private Button btnSetSavePath;
-        private TextBox txtSavePath;
+        private System.Windows.Forms.TreeView treeViewFiles;
+        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog;
+        private System.Windows.Forms.ImageList imageListIcons;
+        private System.Windows.Forms.Button btnSetBasePath;
+        private System.Windows.Forms.TextBox txtBasePath;
+        private System.Windows.Forms.Button btnSetSavePath;
+        private System.Windows.Forms.TextBox txtSavePath;
+        private System.Windows.Forms.LinkLabel linkClearSelection;
+        private System.Windows.Forms.ListBox lstRecents;
+        private System.Windows.Forms.Label lblRecents;
     }
 }
