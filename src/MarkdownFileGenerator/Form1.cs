@@ -91,9 +91,9 @@ namespace CodeContextExport
             recentBasePaths.Remove(path);
             recentBasePaths.Insert(0, path);
 
-            // Limit to 10
-            if (recentBasePaths.Count > 10)
-                recentBasePaths = recentBasePaths.Take(10).ToList();
+            // Limit to 20 instead of 10
+            if (recentBasePaths.Count > 20)
+                recentBasePaths = recentBasePaths.Take(20).ToList();
 
             // Save to config
             string joined = string.Join(",", recentBasePaths);
@@ -184,9 +184,14 @@ namespace CodeContextExport
                 txtBasePath.Text = basePath;
                 SaveSetting("BasePath", basePath);
                 LoadDirectory(basePath);
+
+                // Move selected item to top
+                recentBasePaths.Remove(selectedPath);
+                recentBasePaths.Insert(0, selectedPath);
+                SaveSetting("RecentBasePaths", string.Join(",", recentBasePaths));
+                UpdateRecentsListBox();
             }
         }
-
 
         private void LoadSubDirectories(string dir, TreeNode node)
         {
