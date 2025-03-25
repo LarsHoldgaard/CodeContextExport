@@ -195,10 +195,11 @@ namespace CodeContextExport
 
         private void LoadSubDirectories(string dir, TreeNode node)
         {
-            string[] subdirectoryEntries = Directory.GetDirectories(dir);
-            foreach (string subdirectory in subdirectoryEntries)
+            var subdirectoryEntries = Directory.GetDirectories(dir)
+                                               .Select(d => new DirectoryInfo(d))
+                                               .OrderBy(di => di.Name, StringComparer.OrdinalIgnoreCase); // explicitly sorted alphabetically
+            foreach (var di in subdirectoryEntries)
             {
-                DirectoryInfo di = new DirectoryInfo(subdirectory);
                 TreeNode subNode = new TreeNode(di.Name)
                 {
                     Tag = di.FullName,
@@ -213,17 +214,19 @@ namespace CodeContextExport
 
                 node.Nodes.Add(subNode);
 
-                LoadSubDirectories(subdirectory, subNode);
-                LoadFiles(subdirectory, subNode);
+                LoadSubDirectories(di.FullName, subNode);
+                LoadFiles(di.FullName, subNode);
             }
         }
 
+
         private void LoadFiles(string dir, TreeNode node)
         {
-            string[] files = Directory.GetFiles(dir);
-            foreach (string file in files)
+            var files = Directory.GetFiles(dir)
+                                 .Select(f => new FileInfo(f))
+                                 .OrderBy(fi => fi.Name, StringComparer.OrdinalIgnoreCase); // explicitly sorted alphabetically
+            foreach (var fi in files)
             {
-                FileInfo fi = new FileInfo(file);
                 TreeNode fileNode = new TreeNode(fi.Name)
                 {
                     Tag = fi.FullName,
@@ -239,6 +242,7 @@ namespace CodeContextExport
                 node.Nodes.Add(fileNode);
             }
         }
+
         private bool ShouldIgnore(string path)
         {
             string relativePath = Path.GetRelativePath(basePath, path);
