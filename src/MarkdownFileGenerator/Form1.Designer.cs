@@ -38,6 +38,8 @@
             linkClearSelection = new LinkLabel();
             lstRecents = new ListBox();
             lblRecents = new Label();
+            lblFilter = new Label();
+            txtFilter = new TextBox();
             SuspendLayout();
             // 
             // treeViewFiles
@@ -45,10 +47,10 @@
             treeViewFiles.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             treeViewFiles.ImageIndex = 0;
             treeViewFiles.ImageList = imageListIcons;
-            treeViewFiles.Location = new Point(12, 97);
+            treeViewFiles.Location = new Point(12, 100);
             treeViewFiles.Name = "treeViewFiles";
             treeViewFiles.SelectedImageIndex = 0;
-            treeViewFiles.Size = new Size(660, 341);
+            treeViewFiles.Size = new Size(660, 338);
             treeViewFiles.TabIndex = 0;
             // 
             // imageListIcons
@@ -130,6 +132,34 @@
             lblRecents.TabIndex = 8;
             lblRecents.Text = "Recents";
             // 
+            // lblFilter
+            // 
+            lblFilter.AutoSize = true;
+            lblFilter.Location = new Point(450, 74);
+            lblFilter.Name = "lblFilter";
+            lblFilter.Size = new Size(36, 15);
+            lblFilter.TabIndex = 9;
+            lblFilter.Text = "Filter:";
+            // 
+            // txtFilter
+            // 
+            txtFilter.Location = new Point(492, 71);
+            txtFilter.Name = "txtFilter";
+            txtFilter.Size = new Size(180, 23);
+            txtFilter.TabIndex = 10;
+            txtFilter.TextChanged += txtFilter_TextChanged;
+
+            linkExpandAll = new LinkLabel();
+            linkExpandAll.AutoSize = true;
+            linkExpandAll.Location = new Point(110, 70);          // just to the right of “Clear selection”
+            linkExpandAll.Name = "linkExpandAll";
+            linkExpandAll.Size = new Size(63, 15);
+            linkExpandAll.TabIndex = 11;
+            linkExpandAll.TabStop = true;
+            linkExpandAll.Text = "Expand all";
+            linkExpandAll.LinkClicked += linkExpandAll_LinkClicked;
+
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -144,6 +174,9 @@
             Controls.Add(btnSetBasePath);
             Controls.Add(btnGenerate);
             Controls.Add(treeViewFiles);
+            Controls.Add(linkExpandAll);
+            Controls.Add(lblFilter);
+            Controls.Add(txtFilter);
             Name = "Form1";
             Text = "CodeContextExport";
             Load += Form1_Load;
@@ -164,5 +197,8 @@
         private System.Windows.Forms.LinkLabel linkClearSelection;
         private System.Windows.Forms.ListBox lstRecents;
         private System.Windows.Forms.Label lblRecents;
+        private System.Windows.Forms.Label lblFilter;
+        private System.Windows.Forms.TextBox txtFilter;
+        private System.Windows.Forms.LinkLabel linkExpandAll;
     }
 }

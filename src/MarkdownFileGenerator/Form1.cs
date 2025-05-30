@@ -36,6 +36,111 @@ namespace CodeContextExport
             lstRecents.SelectedIndexChanged += lstRecents_SelectedIndexChanged;
         }
 
+
+        // NEW – called whenever the filter box changes
+        private void txtFilter_TextChanged(object? sender, EventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        /// <summary>
+        /// Builds a filtered view of the directory tree.  
+        /// A directory is kept if it matches the filter itself *or* any of its descendants do.
+        /// </summary>
+        private void ApplyFilter()
+        {
+            if (string.IsNullOrEmpty(basePath)) return;
+
+            string filter = txtFilter.Text.Trim();
+            treeViewFiles.BeginUpdate();
+            treeViewFiles.Nodes.Clear();
+
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                LoadDirectory(basePath);          // no filter -> full tree
+            }
+            else
+            {
+                var root = BuildFilteredNode(basePath, filter);
+                if (root != null)
+                {
+                    treeViewFiles.Nodes.Add(root);
+                    root.Expand();
+                }
+            }
+
+            treeViewFiles.EndUpdate();
+        }
+
+        private void linkExpandAll_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
+        {
+            ExpandAllNodes(treeViewFiles.Nodes);
+        }
+
+        private void ExpandAllNodes(TreeNodeCollection nodes)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                node.Expand();
+                if (node.Nodes.Count > 0)
+                    ExpandAllNodes(node.Nodes);
+            }
+        }
+
+
+        /// <summary>
+        /// Recursively create a node (and its children) that pass the filter.
+        /// Returns null when neither the node nor any child matches.
+        /// </summary>
+        private TreeNode? BuildFilteredNode(string dir, string filter)
+        {
+            DirectoryInfo di = new DirectoryInfo(dir);
+
+            bool dirMatch = di.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                            di.FullName.Contains(filter, StringComparison.OrdinalIgnoreCase);
+
+            TreeNode dirNode = new TreeNode(di.Name)
+            {
+                Tag = di.FullName,
+                ImageIndex = 0,
+                SelectedImageIndex = 0
+            };
+            if (ShouldIgnore(di.FullName))
+                dirNode.ForeColor = System.Drawing.Color.Gray;
+
+            // sub-directories
+            foreach (var sub in Directory.GetDirectories(dir))
+            {
+                var child = BuildFilteredNode(sub, filter);
+                if (child != null) dirNode.Nodes.Add(child);
+            }
+
+            // files
+            foreach (var file in Directory.GetFiles(dir))
+            {
+                FileInfo fi = new FileInfo(file);
+                bool fileMatch = fi.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                                 fi.FullName.Contains(filter, StringComparison.OrdinalIgnoreCase);
+
+                if (fileMatch)
+                {
+                    TreeNode fileNode = new TreeNode(fi.Name)
+                    {
+                        Tag = fi.FullName,
+                        ImageIndex = 1,
+                        SelectedImageIndex = 1
+                    };
+                    if (ShouldIgnore(fi.FullName))
+                        fileNode.ForeColor = System.Drawing.Color.Gray;
+
+                    dirNode.Nodes.Add(fileNode);
+                }
+            }
+
+            return (dirMatch || dirNode.Nodes.Count > 0) ? dirNode : null;
+        }
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             treeViewFiles.CheckBoxes = true;
